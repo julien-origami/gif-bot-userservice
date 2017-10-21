@@ -8,7 +8,15 @@ module.exports = (server) => {
     server.route({
         method: 'GET',
         path: Paths.intern.userParam,
-        handler: UserController.getUser
+        config: {
+            tags: ['api'],
+            validate: {
+                params: {
+                    id: Joi.number().integer().required().description('id')
+                }
+            },
+            handler: UserController.getUser
+        }
     })
 
     server.route({
@@ -16,11 +24,12 @@ module.exports = (server) => {
         path: Paths.intern.user,
         handler: UserController.postUser,
         config: {
+            tags: ['api'],
             validate: {
                 payload: {
-                    name: Joi.string().min(1).required(),
-                    picture: Joi.string().min(50).required(),
-                    idmessenger: Joi.string().min(15).max(17).required()
+                    name: Joi.string().min(1).required().description('name'),
+                    picture: Joi.string().min(50).required().description('picture'),
+                    idmessenger: Joi.string().min(15).max(17).required().description('idmessenger')
                 }
             }
         }
@@ -29,12 +38,23 @@ module.exports = (server) => {
     server.route({
         method: 'DELETE',
         path: Paths.intern.userParam,
-        handler: UserController.deleteUser
+        config: {
+            tags: ['api'],
+            validate: {
+                params: {
+                    id: Joi.number().integer().required().description('id')
+                }
+            },
+            handler: UserController.deleteUser
+        }
     })
 
     server.route({
         method: 'GET',
         path: Paths.intern.user,
-        handler: UserController.getUsers
+        handler: UserController.getUsers,
+        config: {
+            tags: ['api']
+        }
     })
 }
