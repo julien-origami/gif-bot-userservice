@@ -7,6 +7,9 @@ import swaggered from 'hapi-swaggered'
 import swaggeredUI from 'hapi-swaggered-ui'
 import vision from 'vision'
 import inert from 'inert'
+import syslog from 'syslog'
+
+const logger = syslog.createClient(514, '192.168.11.185')
 
 if (!process.env.PATH && process.env.PG_CON) {
   throw 'Make sure you defined PG_CON and PATH in your .env file'
@@ -14,7 +17,7 @@ if (!process.env.PATH && process.env.PG_CON) {
 
 const server = new Hapi.Server()
 //server.connection({ port: 4324, host: '192.168.100.1', routes: { cors: true } })
-server.connection({ port: 4324, host: '192.168.43.20', routes: { cors: true } , labels: ['api'] })
+server.connection({ port: 4324, host: '192.168.11.32', routes: { cors: true } , labels: ['api'] })
 
 server.register([
     vision,
@@ -45,6 +48,7 @@ routes(server)
 
 server.start((err) => {
     if (err) {
+	logger.alert(Date.now()+' Server message service didn\'t start')
         throw err
     }
     console.log('Server running at:', server.info.uri)
@@ -52,6 +56,7 @@ server.start((err) => {
 
 Db.client.connect((err) => {
     if (err) {
+	logger.alert(Date.now()+' Server message service can\'t connect to the database')
         throw err
         console.error('connection error', err.stack)
     }
